@@ -11,6 +11,6 @@ package com.mycompany.practica1lenguajesformales;
 public class Practica1LenguajesFormales {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        InterfazGrafica ventana = new InterfazGrafica();
     }
 }
