@@ -10,4 +10,48 @@ package com.mycompany.practica1lenguajesformales;
  */
 public class AutomataAsignacionYSignos {
     
+    private Estado estado;
+
+    
+    public String validarAsignacionYSignos(String cadena){
+        if(cadena.isEmpty()){
+            return "#000000";
+        }
+        
+        Estado estadoActual = estado.Q0;
+        
+        switch(cadena){
+            case "=":
+                estadoActual = estado.QF;
+                return "#41D9D4";
+            case "+=",
+                 "-=",
+                 "*=",
+                 "/=":
+                estadoActual = estado.QF;
+                return "#FFFFFF";
+                //signos y simbolos
+            case "(",
+                 ")":
+                estadoActual = estado.QF;
+                return "#9AD8DB";
+            case "{",
+                 "}":
+                estadoActual = estado.QF;
+                return "#DBD29A";
+            case "[",
+                 "]":
+                estadoActual = estado.QF;
+                return "#DBA49A";
+            case ",":
+                estadoActual = estado.QF;
+                return "#B79ADB";
+            case ".":
+                estadoActual = estado.QF;
+                return "#9ADBA6";
+            default:
+                return "#000000";
+                        
+        }
+    } 
 }
