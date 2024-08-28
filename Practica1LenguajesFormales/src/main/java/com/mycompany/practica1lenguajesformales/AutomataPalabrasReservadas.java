@@ -9,5 +9,53 @@ package com.mycompany.practica1lenguajesformales;
  * @author herson
  */
 public class AutomataPalabrasReservadas {
-    
+
+    private Estado estado;
+
+    // Método para validar si una cadena es aceptada por el autómata
+    public String validarPalabraReservada(String cadena) {
+        if (cadena.isEmpty()) {
+            return "#000000"; // La cadena vacía no es aceptada
+        }
+
+        Estado estadoActual = estado.Q0; // Estado inicial
+
+        switch(cadena){
+            case "Module",
+                 "End",
+                 "Sub",
+                 "Main",
+                 "Dim",
+                 "As",
+                 "Integer",
+                 "String",
+                 "Boolean",
+                 "Double", 
+                 "Char",
+                 "Console.WriteLine",
+                 "Console.ReadLine",
+                 "If",
+                 "ElseIf",
+                 "Else",
+                 "Then",
+                 "While",
+                 "Do",
+                 "Loop",
+                 "For",
+                 "To",
+                 "Next",
+                 "Function",
+                 "Return",
+                 "Const":
+                estadoActual = estado.QF;
+                break;
+            default:
+                return "#000000";
+                
+        }
+        System.out.println("SE ingreso una palabra reservada");
+
+        // Devuelve "#FFD300" si termina en el estado final, de lo contrario "#000000"
+        return (estadoActual == estado.Q1 || estadoActual == estado.QF) ? "#60A917" : "#000000";
+    }
 }

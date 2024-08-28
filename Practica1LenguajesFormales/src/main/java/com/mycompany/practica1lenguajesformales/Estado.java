@@ -10,4 +10,6 @@ package com.mycompany.practica1lenguajesformales;
  */
 public enum Estado {
     
+    Q0, Q1, Q2, Q3, QF
+    
 }
