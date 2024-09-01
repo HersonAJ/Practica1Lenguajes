@@ -6,21 +6,20 @@ package com.mycompany.practica1lenguajesformales;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.util.HashMap;
 import java.util.List;
-import javax.swing.BorderFactory;
+import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -32,11 +31,16 @@ import javax.swing.UnsupportedLookAndFeelException;
  * @author herson
  */
 public class InterfazGrafica extends JFrame {
-
-    private JPanel jPanel2;
+    private GridPanel gridPanel;
     private JComboBox<Integer> rowSelector;
     private JComboBox<Integer> colSelector;
     private JTextArea textArea1;
+    private Automata automata;
+    private List<TokenInfo> tokens;
+    private Map<String, String> tokenEspecialMap;
+    private Map<String, String> colorToTokenTypeMap;
+    private FileHandler fileHandler;
+    private ReportGenerator reportGenerator;
 
     public InterfazGrafica() {
         // Aplicar el Look and Feel de FlatLaf
@@ -50,21 +54,27 @@ public class InterfazGrafica extends JFrame {
         setSize(1000, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        
-        // Crear el JTextArea
+
+        // Crear el JTextArea con números de línea
         textArea1 = new JTextArea();
+        LineNumberingTextArea lineNumberingTextArea = new LineNumberingTextArea(textArea1);
+        lineNumberingTextArea.setEditable(false);
+
+        // Crear un JScrollPane que contenga ambos JTextAreas
         JScrollPane scrollPane = new JScrollPane(textArea1);
-        
+        scrollPane.setRowHeaderView(lineNumberingTextArea);
+
         // Crear los paneles
         JPanel jPanel1 = new JPanel();
-        jPanel2 = new JPanel();
-        
+        gridPanel = new GridPanel(); 
+
         // Configurar el layout de jPanel1
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(scrollPane, BorderLayout.CENTER);
 
         // Crear el botón
         JButton boton = new JButton("Aceptar");
+        JButton saveButton = new JButton("Guardar Imagen");
 
         // Crear los selectores de filas y columnas
         Integer[] sizes = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30};
@@ -76,7 +86,7 @@ public class InterfazGrafica extends JFrame {
         // Configurar el layout del JFrame usando GridBagLayout
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        
+
         // Configurar jPanel1
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -84,14 +94,14 @@ public class InterfazGrafica extends JFrame {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         add(jPanel1, gbc);
-        
-        // Configurar jPanel2
+
+        // Configurar gridPanel (antes jPanel2)
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 0.5;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        add(jPanel2, gbc);
+        add(gridPanel, gbc);
 
         // Configurar los selectores de filas y columnas
         JPanel selectorPanel = new JPanel();
@@ -109,7 +119,7 @@ public class InterfazGrafica extends JFrame {
         gbc.anchor = GridBagConstraints.PAGE_END;
         add(selectorPanel, gbc);
 
-        // Configurar el botón
+        // Configurar el botón de Aceptar
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
@@ -118,35 +128,87 @@ public class InterfazGrafica extends JFrame {
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.PAGE_END;
         add(boton, gbc);
-        
 
-        // Añadir acción al botón
+        // Configurar el botón de guardar imagen
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.PAGE_END;
+        add(saveButton, gbc);
+
+        // Crear el JMenuBar
+        JMenuBar menuBar = new JMenuBar();
+
+        // Crear los JMenus
+        JMenu menuArchivo = new JMenu("Archivo");
+        JMenu menuReporte = new JMenu("Reporte");
+
+        // Crear los JMenuItems
+        JMenuItem menuItemCargar = new JMenuItem("Cargar Archivo");
+        JMenuItem menuItemReporte = new JMenuItem("Generar Reporte");
+
+        // Agregar los JMenuItems a los JMenus
+        menuArchivo.add(menuItemCargar);
+        menuReporte.add(menuItemReporte);
+
+        // Agregar los JMenus al JMenuBar
+        menuBar.add(menuArchivo);
+        menuBar.add(menuReporte);
+
+        // Configurar el JMenuBar en el JFrame
+        setJMenuBar(menuBar);
+        System.out.println("menuBar configurado en el JFrame");
+
+        automata = new Automata();
+        fileHandler = new FileHandler();
+        
+        reportGenerator = new ReportGenerator(gridPanel);
+
         boton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int rows = (int) rowSelector.getSelectedItem();
                 int cols = (int) colSelector.getSelectedItem();
-                configureGrid(rows, cols);
+                gridPanel.configureGrid(rows, cols);
+
+                String codigo = textArea1.getText();
+                tokenEspecialMap = new HashMap<>();
+                tokens = automata.analizarCodigo(codigo, tokenEspecialMap);
+
+                // Línea de depuración para verificar los colores de los tokens
+                for (TokenInfo token : tokens) {
+                    System.out.println("Token: " + token.getText() + ", Color: " + token.getColor());
                 }
-            
+
+                gridPanel.updateGrid(tokens, tokenEspecialMap);
+            }
         });
 
-        // Hacer visible el JFrame
-        setVisible(true);
-    }
-    
-        private void configureGrid(int rows, int cols) {
-        jPanel2.removeAll();
-        jPanel2.setLayout(new GridLayout(rows, cols));
 
-        for (int i = 0; i < rows * cols; i++) {
-            JPanel cell = new JPanel();
-            cell.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        menuItemCargar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Carga de archivo seleccionado");
+                fileHandler.cargarArchivo(textArea1);
+            }
+        });
 
-            jPanel2.add(cell);
-        }
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fileHandler.guardarImagen(gridPanel);
+            }
+        });
 
-        jPanel2.revalidate();
-        jPanel2.repaint();
+        menuItemReporte.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                reportGenerator.generateReport();
+            }
+        });
+
     }
 }

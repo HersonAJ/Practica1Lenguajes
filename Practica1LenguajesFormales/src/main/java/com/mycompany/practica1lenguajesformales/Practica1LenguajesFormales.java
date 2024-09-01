@@ -4,6 +4,8 @@
 
 package com.mycompany.practica1lenguajesformales;
 
+import javax.swing.SwingUtilities;
+
 /**
  *
  * @author herson
@@ -11,6 +13,11 @@ package com.mycompany.practica1lenguajesformales;
 public class Practica1LenguajesFormales {
 
     public static void main(String[] args) {
-        InterfazGrafica ventana = new InterfazGrafica();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new InterfazGrafica().setVisible(true);
+                }
+            });
+        }
     }
-}
