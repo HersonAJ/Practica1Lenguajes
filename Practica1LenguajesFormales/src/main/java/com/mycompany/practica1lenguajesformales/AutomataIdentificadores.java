@@ -15,7 +15,7 @@ public class AutomataIdentificadores {
     // Método para validar si una cadena es aceptada por el autómata
     public String validarCadena(String cadena) {
         if (cadena.isEmpty()) {
-            return "#000000"; // La cadena vacía no es aceptada
+            return null; // La cadena vacía no es aceptada
         }
 
         // Estado inicial

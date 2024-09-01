@@ -15,7 +15,7 @@ public class AutomataPalabrasReservadas {
     // Método para validar si una cadena es aceptada por el autómata
     public String validarPalabraReservada(String cadena) {
         if (cadena.isEmpty()) {
-            return "#000000"; // La cadena vacía no es aceptada
+            return null; // La cadena vacía no es aceptada
         }
 
         Estado estadoActual = estado.Q0; // Estado inicial
@@ -50,12 +50,12 @@ public class AutomataPalabrasReservadas {
                 estadoActual = estado.QF;
                 break;
             default:
-                return "#000000";
+                return null;
                 
         }
         System.out.println("SE ingreso una palabra reservada");
 
-        // Devuelve "#FFD300" si termina en el estado final, de lo contrario "#000000"
-        return (estadoActual == estado.Q1 || estadoActual == estado.QF) ? "#60A917" : "#000000";
+        // Devuelve "#FFD300" si termina en el estado final, de lo contrario null
+        return (estadoActual == estado.Q1 || estadoActual == estado.QF) ? "#60A917" : null;
     }
 }

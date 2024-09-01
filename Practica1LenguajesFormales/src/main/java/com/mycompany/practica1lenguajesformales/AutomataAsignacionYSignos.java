@@ -15,7 +15,7 @@ public class AutomataAsignacionYSignos {
     
     public String validarAsignacionYSignos(String cadena){
         if(cadena.isEmpty()){
-            return "#000000";
+            return null;
         }
         
         Estado estadoActual = estado.Q0;
@@ -50,7 +50,7 @@ public class AutomataAsignacionYSignos {
                 estadoActual = estado.QF;
                 return "#9ADBA6";
             default:
-                return "#000000";
+                return null;
                         
         }
     } 

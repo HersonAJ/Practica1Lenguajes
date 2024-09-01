@@ -52,7 +52,7 @@ public class Automata {
                 }
             }
         }
-        return null; // Retorna null si el token no es válido
+        return null; 
     }
 
     private boolean esEntero(String str) {

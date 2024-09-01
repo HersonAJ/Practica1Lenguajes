@@ -14,7 +14,7 @@ public class AutomataOperadoresLogicos {
     
     public String validarOperadoresLogicos(String cadena){
     if(cadena.isEmpty()){
-    return "#000000";
+    return null;
 }
     
     Estado estadoActual = estado.Q0;
@@ -30,7 +30,7 @@ public class AutomataOperadoresLogicos {
             estadoActual = estado.QF;
             return "#A741D9";
         default:
-            return "#000000";
+            return null;
     }
     
 }

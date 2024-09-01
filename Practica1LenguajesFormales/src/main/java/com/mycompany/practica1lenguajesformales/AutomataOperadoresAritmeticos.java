@@ -15,7 +15,7 @@ public class AutomataOperadoresAritmeticos {
     
     public String validarOperadorAritmetico(String cadena){
         if (cadena.isEmpty()){
-            return "#000000";
+            return null;
         }
         Estado estadoActual = estado.Q0;
         
@@ -39,7 +39,7 @@ public class AutomataOperadoresAritmeticos {
                 estadoActual = estado.QF;
                 return "#D80073";
             default:
-                return "#000000";
+                return null;
             
         }
     }
