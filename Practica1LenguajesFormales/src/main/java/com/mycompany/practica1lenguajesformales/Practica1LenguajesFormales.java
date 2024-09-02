@@ -4,6 +4,7 @@
 
 package com.mycompany.practica1lenguajesformales;
 
+import com.mycompany.practica1lenguajesformales.Frontend.InterfazGrafica;
 import javax.swing.SwingUtilities;
 
 /**

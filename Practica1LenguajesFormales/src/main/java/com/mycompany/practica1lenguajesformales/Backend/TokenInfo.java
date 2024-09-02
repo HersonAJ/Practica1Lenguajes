@@ -2,13 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.practica1lenguajesformales;
+package com.mycompany.practica1lenguajesformales.Backend;
 
 /**
  *
  * @author herson
  */
-class TokenInfo {
+public class TokenInfo {
     public String text;
     public int fila;
     public int columna;
